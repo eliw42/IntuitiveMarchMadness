@@ -1,0 +1,477 @@
+/* =====================
+   Reset & Variables
+   ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #263248;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius: 6px;
+  --team-h: 32px;
+  --game-gap: 4px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13px;
+}
+
+/* =====================
+   Header
+   ===================== */
+header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent);
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#pick-counter {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-danger { background: var(--danger); color: #fff; }
+
+/* =====================
+   First Four Section
+   ===================== */
+#first-four-section {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.first-four-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ff-game {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  min-width: 200px;
+}
+
+.ff-game-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ff-team {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--team-h);
+  padding: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border: 1px solid transparent;
+}
+.ff-team:hover { background: rgba(245,158,11,0.15); border-color: var(--accent); }
+.ff-team.picked { background: var(--accent); color: #000; font-weight: 700; }
+.ff-team.picked .seed-badge { background: rgba(0,0,0,0.2); color: #000; }
+
+/* =====================
+   Main Bracket Layout
+   ===================== */
+#bracket-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 20px 10px;
+  overflow-x: auto;
+  min-height: calc(100vh - 160px);
+}
+
+.bracket-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bracket-side.left-side { align-items: flex-end; }
+.bracket-side.right-side { align-items: flex-start; }
+
+/* =====================
+   Region
+   ===================== */
+.region-wrapper {
+  width: 100%;
+}
+
+.region-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.region-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.region-name {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.region-seed1 {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* bracket rounds laid out as columns */
+.bracket-rounds {
+  display: flex;
+  align-items: center;
+}
+
+/* For right-side regions, flip the direction */
+.right-side .bracket-rounds { flex-direction: row-reverse; }
+
+/* =====================
+   Round Column
+   ===================== */
+.round-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.round-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+/* =====================
+   Game / Match
+   ===================== */
+.game {
+  display: flex;
+  flex-direction: column;
+  margin: var(--game-gap) 2px;
+  position: relative;
+}
+
+.team-slot {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: var(--team-h);
+  padding: 0 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: default;
+  position: relative;
+  min-width: 140px;
+  max-width: 180px;
+  transition: background 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.team-slot:first-child { border-radius: var(--radius) var(--radius) 0 0; border-bottom: none; }
+.team-slot:last-child  { border-radius: 0 0 var(--radius) var(--radius); }
+
+.team-slot.clickable {
+  cursor: pointer;
+}
+.team-slot.clickable:hover {
+  background: rgba(245,158,11,0.12);
+  border-color: var(--accent);
+  z-index: 1;
+}
+
+.team-slot.picked {
+  background: var(--accent);
+  border-color: var(--accent-hover);
+  color: #000;
+  font-weight: 700;
+}
+.team-slot.picked .seed-badge {
+  background: rgba(0,0,0,0.18);
+  color: #000;
+}
+
+.team-slot.eliminated {
+  opacity: 0.4;
+}
+
+.team-slot.empty {
+  color: var(--text-muted);
+  font-style: italic;
+  cursor: default;
+}
+
+.seed-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--border);
+  color: var(--text-muted);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.team-name {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* =====================
+   Connector lines between rounds
+   ===================== */
+.connector-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.connector-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+/* =====================
+   Center: Final Four + Championship
+   ===================== */
+.bracket-center {
+  flex-shrink: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.final-four-label {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.championship-bracket {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.semifinal {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.sf-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.12s;
+  font-size: 13px;
+  font-weight: 600;
+}
+.sf-slot + .sf-slot { border-top: 1px solid var(--border); }
+.sf-slot.has-team:hover { background: rgba(245,158,11,0.15); border-color: var(--accent); }
+.sf-slot.picked { background: var(--accent); color: #000; font-weight: 700; }
+.sf-slot.picked .seed-badge { background: rgba(0,0,0,0.18); color: #000; }
+.sf-slot.empty { color: var(--text-muted); font-style: italic; cursor: default; }
+
+.sf-connector {
+  height: 1px;
+  background: var(--border);
+}
+
+.championship-area {
+  width: 100%;
+  text-align: center;
+}
+
+.champ-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.champ-game {
+  background: var(--surface2);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.champ-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 13px;
+  font-weight: 600;
+}
+.champ-slot + .champ-slot { border-top: 1px solid var(--border); }
+.champ-slot.has-team:hover { background: rgba(245,158,11,0.2); }
+.champ-slot.picked { background: var(--accent); color: #000; font-weight: 700; }
+.champ-slot.picked .seed-badge { background: rgba(0,0,0,0.18); color: #000; }
+.champ-slot.empty { color: var(--text-muted); font-style: italic; cursor: default; }
+
+.champ-vs {
+  text-align: center;
+  padding: 4px 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.champion-display {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #78350f, #92400e);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.champion-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.champion-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* =====================
+   Footer
+   ===================== */
+footer {
+  text-align: center;
+  padding: 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+/* =====================
+   Responsive
+   ===================== */
+@media (max-width: 900px) {
+  #bracket-container {
+    flex-direction: column;
+  }
+  .bracket-side { align-items: stretch; }
+  .bracket-center { width: 100%; }
+  .team-slot { min-width: 120px; max-width: 160px; }
+}

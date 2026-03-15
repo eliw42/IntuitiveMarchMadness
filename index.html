@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026 March Madness Bracket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1>🏀 2026 NCAA Tournament Bracket</h1>
+      <div class="header-actions">
+        <span id="pick-counter">0 / 63 picks made</span>
+        <button id="reset-btn" class="btn btn-danger">Reset Bracket</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- First Four -->
+  <section id="first-four-section">
+    <h2 class="section-title">First Four — Dayton, OH (Mar 17–18)</h2>
+    <div id="first-four-games" class="first-four-grid"></div>
+  </section>
+
+  <!-- Main Bracket -->
+  <main id="bracket-container">
+    <!-- Left side: East + Midwest -->
+    <div class="bracket-side left-side">
+      <div id="region-east" class="region-wrapper"></div>
+      <div id="region-midwest" class="region-wrapper"></div>
+    </div>
+
+    <!-- Center: Final Four + Championship -->
+    <div class="bracket-center">
+      <div class="final-four-label">Final Four</div>
+      <div class="championship-bracket">
+        <div class="semifinal" id="semifinal1">
+          <div class="sf-slot" id="sf1-slot1" data-side="1"></div>
+          <div class="sf-connector"></div>
+          <div class="sf-slot" id="sf1-slot2" data-side="2"></div>
+        </div>
+
+        <div class="championship-area">
+          <div class="champ-label">Championship</div>
+          <div class="champ-game">
+            <div class="champ-slot" id="champ-slot1"></div>
+            <div class="champ-vs">VS</div>
+            <div class="champ-slot" id="champ-slot2"></div>
+          </div>
+          <div class="champion-display" id="champion-display">
+            <div class="champion-label">🏆 Champion</div>
+            <div class="champion-name" id="champion-name">—</div>
+          </div>
+        </div>
+
+        <div class="semifinal" id="semifinal2">
+          <div class="sf-slot" id="sf2-slot1" data-side="1"></div>
+          <div class="sf-connector"></div>
+          <div class="sf-slot" id="sf2-slot2" data-side="2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right side: West + South -->
+    <div class="bracket-side right-side">
+      <div id="region-west" class="region-wrapper"></div>
+      <div id="region-south" class="region-wrapper"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Data as of Selection Sunday, March 15, 2026. Picks saved automatically.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
