@@ -8,15 +8,16 @@ const ESPN_CDN = 'https://a.espncdn.com/i/teamlogos/ncaa/500/';
 
 // ── State ─────────────────────────────────────────────────────────────
 // wizard.phase:
-//   'landing'  — choose tournament
-//   'firstfour' — pick First Four games (if any)
-//   'region'   — walk through each game in each region
-//   'finalfour' — SF games
+//   'landing'      — choose tournament
+//   'region'       — walk through each game in each region
+//   'finalfour'    — SF games
 //   'championship' — title game
-//   'score'    — score prediction
-//   'review'   — show full bracket
+//   'score'        — score prediction
+//   'review'       — show full bracket
 //
-// wizard.ffIndex     — index into tournament.firstFour
+// First Four slots are never picked — they appear as "Team1 / Team2"
+// throughout the bracket as a combined entity.
+//
 // wizard.regionIndex — index into tournament.regions
 // wizard.roundIndex  — 0-3
 // wizard.gameIndex   — 0..(gamesInRound-1)
@@ -30,19 +31,17 @@ let state = {
   },
   wizard: {
     phase: 'landing',
-    ffIndex: 0,
     regionIndex: 0,
-    roundIndex: 0,
-    gameIndex: 0,
-    ffPhase: 0,
+    roundIndex:  0,
+    gameIndex:   0,
+    ffPhase:     0,
   },
 };
 
 function makeEmptyPicks(key) {
   const t = TOURNAMENTS[key];
   return {
-    firstFour: {},                      // { ffId: teamName }
-    regions: t.regions.map(r => [
+    regions: t.regions.map(() => [
       new Array(8).fill(null),          // R64 winners
       new Array(4).fill(null),          // R32
       new Array(2).fill(null),          // S16
@@ -79,10 +78,22 @@ function T()  { return TOURNAMENTS[state.tournament]; }
 function P()  { return state.picks[state.tournament]; }
 function W()  { return state.wizard; }
 
-/** Resolve slot → actual team name (handling First Four TBDs) */
+/** Combined label for a First Four slot, e.g. "Texas / NC State" */
+function firstFourLabel(ffId) {
+  const ff = T().firstFour.find(f => f.id === ffId);
+  return ff ? `${ff.team1} / ${ff.team2}` : 'TBD';
+}
+
+/** If a team name is a First Four combined label, return the FF entry; else null */
+function findFirstFourByLabel(name) {
+  if (!state.tournament || !name) return null;
+  return T().firstFour.find(f => `${f.team1} / ${f.team2}` === name) || null;
+}
+
+/** Resolve slot → display name (First Four slots become "Team1 / Team2") */
 function resolveSlot(slot) {
   if (!slot.firstFourId) return slot.name;
-  return P().firstFour[slot.firstFourId] || null;
+  return firstFourLabel(slot.firstFourId);
 }
 
 /** Get the two team names for a game at [regionIndex, roundIndex, gameIndex] */
@@ -103,7 +114,9 @@ function getMatchupNames(regionIndex, roundIndex, gameIndex) {
 function seedInRegion(regionIndex, name) {
   if (!name) return null;
   const region = T().regions[regionIndex];
-  const slot = region.slots.find(s => (s.firstFourId ? P().firstFour[s.firstFourId] : s.name) === name || s.name === name);
+  const slot = region.slots.find(s =>
+    (s.firstFourId ? firstFourLabel(s.firstFourId) : s.name) === name
+  );
   return slot ? slot.seed : null;
 }
 
@@ -119,7 +132,7 @@ function seedAnywhere(name) {
 /** Total picks made in current tournament */
 function countPicks() {
   const p = P();
-  let n = Object.keys(p.firstFour).length;
+  let n = 0;
   p.regions.forEach(r => r.forEach(round => round.forEach(w => { if (w) n++; })));
   if (p.finalFour.sf[0]) n++;
   if (p.finalFour.sf[1]) n++;
@@ -127,43 +140,28 @@ function countPicks() {
   return n;
 }
 
-/** Total games that need picking (First Four + 63 bracket games) */
-function totalGames() {
-  const ffCount = T().firstFour.length;
-  return ffCount + 63;
-}
-
-/** Progress for the wizard flow (number of wizard steps completed out of total) */
+/** Progress for the wizard flow */
 function wizardProgress() {
   const w = W();
-  const ffTotal = T().firstFour.length;
   const ROUND_GAMES = [8, 4, 2, 1];
+  const allRegionGames = T().regions.length * 15; // 15 per region
   let done = 0;
 
   if (w.phase === 'landing') return { done: 0, total: 1 };
 
-  // First Four games done
-  if (w.phase === 'firstfour') done = w.ffIndex;
-  else done = ffTotal;
-
-  // Region games done
-  const allRegionGames = 4 * 15; // 15 games per region × 4 regions
   if (w.phase === 'region') {
-    let regionDone = 0;
-    for (let r = 0; r < w.regionIndex; r++) regionDone += 15;
-    for (let rd = 0; rd < w.roundIndex; rd++) regionDone += ROUND_GAMES[rd];
-    regionDone += w.gameIndex;
-    done += regionDone;
+    for (let r = 0; r < w.regionIndex; r++) done += 15;
+    for (let rd = 0; rd < w.roundIndex; rd++) done += ROUND_GAMES[rd];
+    done += w.gameIndex;
   } else if (['finalfour','championship','score','review'].includes(w.phase)) {
-    done += allRegionGames;
+    done = allRegionGames;
   }
 
-  // Final Four / championship
-  if (w.phase === 'finalfour')   done += w.ffPhase;
+  if (w.phase === 'finalfour') done += w.ffPhase;
   else if (['championship','score','review'].includes(w.phase)) done += 2;
   if (w.phase === 'score' || w.phase === 'review') done += 1;
 
-  const total = ffTotal + allRegionGames + 2 + 1 + 1;
+  const total = allRegionGames + 2 + 1 + 1;
   return { done: Math.min(done, total), total };
 }
 
@@ -192,7 +190,6 @@ function render() {
   app.querySelector('.wizard-progress-text').textContent = `${done}/${total}`;
 
   switch (w.phase) {
-    case 'firstfour':    body.innerHTML = renderFirstFour();    bindFirstFour();    break;
     case 'region':       body.innerHTML = renderRegionGame();   bindRegionGame();   break;
     case 'finalfour':    body.innerHTML = renderFinalFour();    bindFinalFour();    break;
     case 'championship': body.innerHTML = renderChampionship(); bindChampionship(); break;
@@ -239,13 +236,8 @@ function bindLanding() {
       if (hasExisting && !confirm('You have existing picks for this bracket. Start over?')) return;
       state.picks[state.tournament] = makeEmptyPicks(state.tournament);
       const w = W();
-      if (T().firstFour.length > 0) {
-        w.phase = 'firstfour';
-        w.ffIndex = 0;
-      } else {
-        w.phase = 'region';
-        w.regionIndex = 0; w.roundIndex = 0; w.gameIndex = 0;
-      }
+      w.phase = 'region';
+      w.regionIndex = 0; w.roundIndex = 0; w.gameIndex = 0;
       save(); render();
     });
   });
@@ -269,61 +261,6 @@ function renderWizardShell() {
     </div>
     <div class="wizard-body" style="flex:1;display:flex;flex-direction:column;"></div>
   </div>`;
-}
-
-// ── First Four ────────────────────────────────────────────────────────
-function renderFirstFour() {
-  const ff = T().firstFour[W().ffIndex];
-  const picked = P().firstFour[ff.id];
-  const teams  = [ff.team1, ff.team2];
-
-  return `
-  <div class="round-banner">
-    <div class="round-banner-label">First Four · Dayton, OH</div>
-    <div class="round-banner-title">${ff.region} Region — Seed ${ff.seed}</div>
-    <div class="round-banner-subtitle">Game ${W().ffIndex + 1} of ${T().firstFour.length}</div>
-  </div>
-  <div class="game-stage">
-    <div class="first-four-note">Pick the winner to advance to the main bracket</div>
-    <div class="matchup-row">
-      ${teams.map(name => renderTeamCard(name, ff.seed, null, picked === name)).join(`
-        <div class="vs-divider">VS</div>
-      `)}
-    </div>
-    <div class="wizard-nav">
-      <button class="wizard-nav-btn secondary" id="skip-ff-btn">Skip (decide later)</button>
-      <button class="wizard-nav-btn primary" id="next-ff-btn" ${picked ? '' : 'disabled'}>Next →</button>
-    </div>
-  </div>`;
-}
-
-function bindFirstFour() {
-  const ff = T().firstFour[W().ffIndex];
-  document.querySelectorAll('.team-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const name = card.dataset.name;
-      P().firstFour[ff.id] = (P().firstFour[ff.id] === name) ? null : name;
-      // Cascade-clear downstream picks that relied on this First Four result
-      cascadeFirstFour(ff.id);
-      save(); render();
-    });
-  });
-  document.getElementById('skip-ff-btn').addEventListener('click', () => {
-    P().firstFour[ff.id] = null;
-    advanceFirstFour();
-  });
-  document.getElementById('next-ff-btn').addEventListener('click', advanceFirstFour);
-}
-
-function advanceFirstFour() {
-  const w = W();
-  if (w.ffIndex + 1 < T().firstFour.length) {
-    w.ffIndex++;
-  } else {
-    w.phase = 'region';
-    w.regionIndex = 0; w.roundIndex = 0; w.gameIndex = 0;
-  }
-  save(); render();
 }
 
 // ── Region Games ──────────────────────────────────────────────────────
@@ -707,6 +644,10 @@ function bindReview() {
 
 // ── Team Card ─────────────────────────────────────────────────────────
 function renderTeamCard(name, seed, regionIndex, isSelected) {
+  // First Four combined entry — show a split card with both teams' info
+  const ffEntry = findFirstFourByLabel(name);
+  if (ffEntry) return renderFirstFourCard(ffEntry, seed, isSelected);
+
   const info = getSchoolInfo(name);
   const c1   = info ? info.color1 : '#1f2937';
   const c2   = info ? info.color2 : '#374151';
@@ -755,6 +696,43 @@ function renderTeamCard(name, seed, regionIndex, isSelected) {
   </div>`;
 }
 
+/** Card for a First Four slot — shows both teams side-by-side within one card */
+function renderFirstFourCard(ff, seed, isSelected) {
+  const infoA = getSchoolInfo(ff.team1);
+  const infoB = getSchoolInfo(ff.team2);
+  const c1A = infoA ? infoA.color1 : '#1f2937';
+  const c1B = infoB ? infoB.color1 : '#374151';
+  const emojiA = infoA ? infoA.emoji : '🏀';
+  const emojiB = infoB ? infoB.emoji : '🏀';
+  const label = `${ff.team1} / ${ff.team2}`;
+  const selectedClass = isSelected ? 'selected' : '';
+
+  // Collect one fact from each team
+  const factA = infoA && infoA.facts[0] ? `<div class="team-card-fact"><strong>${ff.team1}:</strong> ${infoA.facts[0]}</div>` : '';
+  const factB = infoB && infoB.facts[0] ? `<div class="team-card-fact"><strong>${ff.team2}:</strong> ${infoB.facts[0]}</div>` : '';
+
+  return `
+  <div class="team-card ${selectedClass}" data-name="${escHtml(label)}" style="cursor:pointer">
+    <div class="team-card-banner" style="background:linear-gradient(160deg,${c1A},${c1B})">
+      <div class="team-card-seed">${seed ?? '?'}</div>
+      <div style="display:flex;gap:8px;align-items:center;justify-content:center;">
+        <div class="team-card-mascot-wrap" style="background:rgba(0,0,0,0.25);width:52px;height:52px;font-size:28px">${emojiA}</div>
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6)">vs</div>
+        <div class="team-card-mascot-wrap" style="background:rgba(0,0,0,0.25);width:52px;height:52px;font-size:28px">${emojiB}</div>
+      </div>
+      <div class="team-card-name" style="font-size:15px">${escHtml(label)}</div>
+      <div class="team-card-mascot-name">First Four — TBD winner advances</div>
+    </div>
+    <div class="team-card-body">
+      <div>
+        <div class="team-card-section-title">About these teams</div>
+        <div class="team-card-facts">${factA}${factB}</div>
+      </div>
+    </div>
+    <div class="team-card-pick-prompt">${isSelected ? '✓ Picked — click to deselect' : 'Click to advance First Four winner'}</div>
+  </div>`;
+}
+
 function escHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -764,16 +742,6 @@ function escHtml(str) {
 }
 
 // ── Cascade (invalidate downstream picks) ─────────────────────────────
-function cascadeFirstFour(ffId) {
-  // Find which region/slot uses this FF id
-  T().regions.forEach((region, ri) => {
-    const slotIdx = region.slots.findIndex(s => s.firstFourId === ffId);
-    if (slotIdx < 0) return;
-    const gameIdx = Math.floor(slotIdx / 2);
-    cascadeRegion(ri, 0, gameIdx);
-  });
-}
-
 function cascadeRegion(regionIndex, roundIndex, gameIndex) {
   const picks = P().regions[regionIndex];
   const prev  = picks[roundIndex][gameIndex];
@@ -799,11 +767,6 @@ function goBack() {
   const ROUND_GAMES = [8, 4, 2, 1];
 
   switch (w.phase) {
-    case 'firstfour':
-      if (w.ffIndex > 0) { w.ffIndex--; }
-      else { w.phase = 'landing'; state.tournament = null; }
-      break;
-
     case 'region':
       if (w.gameIndex > 0) {
         w.gameIndex--;
@@ -814,9 +777,6 @@ function goBack() {
         w.regionIndex--;
         w.roundIndex = 3;
         w.gameIndex  = 0;
-      } else if (T().firstFour.length > 0) {
-        w.phase   = 'firstfour';
-        w.ffIndex = T().firstFour.length - 1;
       } else {
         w.phase = 'landing';
         state.tournament = null;
