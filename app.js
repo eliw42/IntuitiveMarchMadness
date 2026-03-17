@@ -650,34 +650,33 @@ function renderTeamCard(name, seed, regionIndex, isSelected) {
 
   const info = getSchoolInfo(name);
   const c1   = info ? info.color1 : '#1f2937';
-  const c2   = info ? info.color2 : '#374151';
-  const emoji = info ? info.emoji : '🏀';
+  const emoji  = info ? info.emoji  : '🏀';
   const mascot = info ? info.mascot : name;
-  const city   = info ? info.city  : '';
+  const city   = info ? info.city   : '';
 
-  const espnId = info ? info.espnId : null;
-  const imgHtml = espnId
-    ? `<img class="team-card-mascot-img"
+  const espnId  = info ? info.espnId : null;
+  const logoImg = espnId
+    ? `<img class="school-logo-img"
           src="${ESPN_CDN}${espnId}.png"
           onerror="this.style.display='none'"
-          alt="${mascot} logo" />`
+          alt="${escHtml(name)} logo" />`
     : '';
 
-  const factsHtml = info ? info.facts.map(f => `<div class="team-card-fact">${f}</div>`).join('') : '';
+  const factsHtml  = info ? info.facts.map(f => `<div class="team-card-fact">${f}</div>`).join('') : '';
   const alumniHtml = info ? info.alumni.map(a => `<div class="team-card-alum">${a}</div>`).join('') : '';
 
   const selectedClass = isSelected ? 'selected' : '';
 
   return `
   <div class="team-card ${selectedClass}" data-name="${escHtml(name)}" style="cursor:pointer">
-    <div class="team-card-banner" style="background:linear-gradient(160deg,${c1},${c2})">
+    <div class="team-card-banner" style="background:${c1}">
       <div class="team-card-seed">${seed ?? '?'}</div>
-      <div class="team-card-mascot-wrap" style="background:rgba(0,0,0,0.25)">
-        ${imgHtml}
-        <span style="position:relative;z-index:1">${emoji}</span>
-      </div>
+      ${logoImg}
       <div class="team-card-name">${escHtml(name)}</div>
-      <div class="team-card-mascot-name">${escHtml(mascot)}</div>
+      <div class="team-card-mascot-row">
+        <span class="team-card-mascot-emoji">${emoji}</span>
+        <span class="team-card-mascot-name">${escHtml(mascot)}</span>
+      </div>
       ${city ? `<div class="team-card-city">📍 ${escHtml(city)}</div>` : ''}
     </div>
     <div class="team-card-body">
@@ -696,32 +695,45 @@ function renderTeamCard(name, seed, regionIndex, isSelected) {
   </div>`;
 }
 
-/** Card for a First Four slot — shows both teams side-by-side within one card */
+/** Card for a First Four slot — split banner showing both teams' logos */
 function renderFirstFourCard(ff, seed, isSelected) {
-  const infoA = getSchoolInfo(ff.team1);
-  const infoB = getSchoolInfo(ff.team2);
-  const c1A = infoA ? infoA.color1 : '#1f2937';
-  const c1B = infoB ? infoB.color1 : '#374151';
-  const emojiA = infoA ? infoA.emoji : '🏀';
-  const emojiB = infoB ? infoB.emoji : '🏀';
-  const label = `${ff.team1} / ${ff.team2}`;
+  const infoA  = getSchoolInfo(ff.team1);
+  const infoB  = getSchoolInfo(ff.team2);
+  const c1A    = infoA ? infoA.color1 : '#1f2937';
+  const c1B    = infoB ? infoB.color1 : '#374151';
+  const emojiA = infoA ? infoA.emoji  : '🏀';
+  const emojiB = infoB ? infoB.emoji  : '🏀';
+  const label  = `${ff.team1} / ${ff.team2}`;
   const selectedClass = isSelected ? 'selected' : '';
 
-  // Collect one fact from each team
-  const factA = infoA && infoA.facts[0] ? `<div class="team-card-fact"><strong>${ff.team1}:</strong> ${infoA.facts[0]}</div>` : '';
-  const factB = infoB && infoB.facts[0] ? `<div class="team-card-fact"><strong>${ff.team2}:</strong> ${infoB.facts[0]}</div>` : '';
+  const logoA = infoA?.espnId
+    ? `<img class="ff-logo-img" src="${ESPN_CDN}${infoA.espnId}.png" onerror="this.style.display='none'" alt="${ff.team1}"/>`
+    : `<span class="ff-logo-emoji">${emojiA}</span>`;
+  const logoB = infoB?.espnId
+    ? `<img class="ff-logo-img" src="${ESPN_CDN}${infoB.espnId}.png" onerror="this.style.display='none'" alt="${ff.team2}"/>`
+    : `<span class="ff-logo-emoji">${emojiB}</span>`;
+
+  const factA = infoA?.facts[0] ? `<div class="team-card-fact"><strong>${ff.team1}:</strong> ${infoA.facts[0]}</div>` : '';
+  const factB = infoB?.facts[0] ? `<div class="team-card-fact"><strong>${ff.team2}:</strong> ${infoB.facts[0]}</div>` : '';
 
   return `
   <div class="team-card ${selectedClass}" data-name="${escHtml(label)}" style="cursor:pointer">
-    <div class="team-card-banner" style="background:linear-gradient(160deg,${c1A},${c1B})">
+    <div class="team-card-banner ff-banner">
       <div class="team-card-seed">${seed ?? '?'}</div>
-      <div style="display:flex;gap:8px;align-items:center;justify-content:center;">
-        <div class="team-card-mascot-wrap" style="background:rgba(0,0,0,0.25);width:52px;height:52px;font-size:28px">${emojiA}</div>
-        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6)">vs</div>
-        <div class="team-card-mascot-wrap" style="background:rgba(0,0,0,0.25);width:52px;height:52px;font-size:28px">${emojiB}</div>
+      <div class="ff-split">
+        <div class="ff-half" style="background:${c1A}">
+          ${logoA}
+          <div class="ff-half-name">${escHtml(ff.team1)}</div>
+          <div class="ff-half-mascot">${emojiA}</div>
+        </div>
+        <div class="ff-vs">VS</div>
+        <div class="ff-half" style="background:${c1B}">
+          ${logoB}
+          <div class="ff-half-name">${escHtml(ff.team2)}</div>
+          <div class="ff-half-mascot">${emojiB}</div>
+        </div>
       </div>
-      <div class="team-card-name" style="font-size:15px">${escHtml(label)}</div>
-      <div class="team-card-mascot-name">First Four — TBD winner advances</div>
+      <div class="ff-footer">First Four — Seed ${seed} · TBD winner advances</div>
     </div>
     <div class="team-card-body">
       <div>
