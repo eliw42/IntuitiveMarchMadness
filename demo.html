@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Card Banner Demo — 10 Schools</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0f1e;
+      color: #f9fafb;
+      padding: 32px 20px;
+    }
+    h1 { font-size: 22px; font-weight: 800; color: #f59e0b; margin-bottom: 8px; }
+    p  { font-size: 13px; color: #9ca3af; margin-bottom: 28px; max-width: 700px; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    /* ── Banner ──────────────────────────────────────────────────── */
+    .banner {
+      border-radius: 14px 14px 0 0;
+      padding: 20px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      min-height: 200px;
+    }
+    .seed {
+      position: absolute;
+      top: 10px; left: 10px;
+      width: 26px; height: 26px;
+      background: rgba(0,0,0,0.35);
+      border-radius: 50%;
+      font-size: 11px; font-weight: 900; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* School primary logo — large, let the PNG speak for itself */
+    .school-logo {
+      width: 90px; height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+    /* Mascot row: emoji + optional note */
+    .mascot-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mascot-emoji { font-size: 26px; line-height: 1; }
+    .mascot-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+    }
+    .school-name {
+      font-size: 16px; font-weight: 800; color: #fff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    /* Note below name: logo type */
+    .logo-type {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      color: #fff;
+      text-align: center;
+    }
+    /* ── Card body ───────────────────────────────────────────────── */
+    .card {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .body {
+      background: #111827;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+    .body strong { color: #f59e0b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Card Banner Demo — 10 Schools</h1>
+  <p>
+    Each card shows: <strong>(1) school primary logo from ESPN CDN</strong> (transparent PNG on solid school color)
+    and <strong>(2) mascot emoji + name</strong>. For schools whose ESPN logo already IS the mascot
+    (Kansas Jayhawk, Florida Gator, etc.) the top image serves as both. Schools with wordmark logos
+    (Duke, Michigan, UNC) would need a separate source for a mascot illustration.
+  </p>
+
+  <div class="grid">
+
+    <!-- 1. Duke — wordmark logo -->
+    <div class="card">
+      <div class="banner" style="background:#003087">
+        <div class="seed">1</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/150.png"
+             onerror="this.style.opacity='0.3'" alt="Duke logo"/>
+        <div class="school-name">Duke</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">😈</span>
+          <span class="mascot-label">Blue Devils</span>
+        </div>
+        <div class="logo-type">wordmark logo</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = "DUKE" wordmark. Blue Devil character image is ©Duke.
+      </div>
+    </div>
+
+    <!-- 2. Michigan — lettermark -->
+    <div class="card">
+      <div class="banner" style="background:#00274C">
+        <div class="seed">1</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/130.png"
+             onerror="this.style.opacity='0.3'" alt="Michigan logo"/>
+        <div class="school-name">Michigan</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🦡</span>
+          <span class="mascot-label">Wolverines</span>
+        </div>
+        <div class="logo-type">lettermark / winged M</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = winged "M". Wolverine mascot image is ©UMich.
+      </div>
+    </div>
+
+    <!-- 3. Washington — lettermark W -->
+    <div class="card">
+      <div class="banner" style="background:#4B2E83">
+        <div class="seed">6</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/264.png"
+             onerror="this.style.opacity='0.3'" alt="Washington logo"/>
+        <div class="school-name">Washington</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🐕</span>
+          <span class="mascot-label">Huskies</span>
+        </div>
+        <div class="logo-type">lettermark W</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = purple/gold "W". Husky photo is ©UW.
+      </div>
+    </div>
+
+    <!-- 4. Kansas — Jayhawk (mascot IS the logo) -->
+    <div class="card">
+      <div class="banner" style="background:#0051A5">
+        <div class="seed">1</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/2305.png"
+             onerror="this.style.opacity='0.3'" alt="Kansas logo"/>
+        <div class="school-name">Kansas</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🦅</span>
+          <span class="mascot-label">Jayhawks</span>
+        </div>
+        <div class="logo-type">mascot logo ✓</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = Jayhawk illustration. Mascot & logo are the same — no second image needed.
+      </div>
+    </div>
+
+    <!-- 5. Tennessee — Power T -->
+    <div class="card">
+      <div class="banner" style="background:#FF8200">
+        <div class="seed">6</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/2633.png"
+             onerror="this.style.opacity='0.3'" alt="Tennessee logo"/>
+        <div class="school-name">Tennessee</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🔶</span>
+          <span class="mascot-label">Volunteers</span>
+        </div>
+        <div class="logo-type">Power T lettermark</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = orange Power T. Smokey the hound photo is ©UT.
+      </div>
+    </div>
+
+    <!-- 6. Gonzaga — wordmark/bulldog -->
+    <div class="card">
+      <div class="banner" style="background:#002469">
+        <div class="seed">3</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/2250.png"
+             onerror="this.style.opacity='0.3'" alt="Gonzaga logo"/>
+        <div class="school-name">Gonzaga</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🐶</span>
+          <span class="mascot-label">Bulldogs</span>
+        </div>
+        <div class="logo-type">wordmark / may include dog</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo sometimes includes bulldog element. Check result in browser.
+      </div>
+    </div>
+
+    <!-- 7. Florida — Gator (mascot logo) -->
+    <div class="card">
+      <div class="banner" style="background:#0021A5">
+        <div class="seed">1</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/57.png"
+             onerror="this.style.opacity='0.3'" alt="Florida logo"/>
+        <div class="school-name">Florida</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🐊</span>
+          <span class="mascot-label">Gators</span>
+        </div>
+        <div class="logo-type">gator mascot logo ✓</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = Albert the Gator illustration. Works as both mark and mascot.
+      </div>
+    </div>
+
+    <!-- 8. North Carolina — tar heel logo -->
+    <div class="card">
+      <div class="banner" style="background:#4B9CD3">
+        <div class="seed">6</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/153.png"
+             onerror="this.style.opacity='0.3'" alt="UNC logo"/>
+        <div class="school-name">North Carolina</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🐏</span>
+          <span class="mascot-label">Tar Heels</span>
+        </div>
+        <div class="logo-type">UNC wordmark / ram logo</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo may be the ram or "UNC" mark. Rameses photo is ©UNC.
+      </div>
+    </div>
+
+    <!-- 9. South Carolina — gamecock -->
+    <div class="card">
+      <div class="banner" style="background:#73000A">
+        <div class="seed">1</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/2579.png"
+             onerror="this.style.opacity='0.3'" alt="South Carolina logo"/>
+        <div class="school-name">South Carolina</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🐓</span>
+          <span class="mascot-label">Gamecocks</span>
+        </div>
+        <div class="logo-type">gamecock logo ✓</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = stylized gamecock. Works as both wordmark and mascot visual.
+      </div>
+    </div>
+
+    <!-- 10. Iowa State — cyclone/cardinal -->
+    <div class="card">
+      <div class="banner" style="background:#C8102E">
+        <div class="seed">2</div>
+        <img class="school-logo"
+             src="https://a.espncdn.com/i/teamlogos/ncaa/500/66.png"
+             onerror="this.style.opacity='0.3'" alt="Iowa State logo"/>
+        <div class="school-name">Iowa State</div>
+        <div class="mascot-row">
+          <span class="mascot-emoji">🌪️</span>
+          <span class="mascot-label">Cyclones</span>
+        </div>
+        <div class="logo-type">Cy the cardinal logo ✓</div>
+      </div>
+      <div class="body">
+        <strong>Note</strong>
+        ESPN logo = Cy the Cardinal illustration. Works as both mark and mascot.
+      </div>
+    </div>
+
+  </div>
+
+  <p style="margin-top: 32px; font-size: 13px; color: #6b7280;">
+    Open this file in a browser. The ESPN CDN images load live — you'll see the actual logos.
+    Schools marked ✓ have mascot-based ESPN logos (no second image needed).
+    Schools with wordmark logos would need a separate licensed mascot image source.
+  </p>
+</body>
+</html>
