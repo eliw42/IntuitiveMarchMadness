@@ -148,6 +148,20 @@ body {
 .wizard-back-btn:hover { background: var(--surface3); }
 .wizard-back-btn:disabled { opacity: 0.3; cursor: default; }
 
+.wizard-reset-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.wizard-reset-btn:hover { background: var(--surface3); color: #f87171; }
+
 .wizard-title {
   font-size: 14px;
   font-weight: 700;

@@ -199,6 +199,16 @@ function render() {
 
   // Back button
   app.querySelector('#wiz-back-btn').addEventListener('click', goBack);
+
+  // Reset button
+  app.querySelector('#wiz-reset-btn').addEventListener('click', () => {
+    if (!confirm('Reset all picks and start over?')) return;
+    state.picks[state.tournament] = makeEmptyPicks(state.tournament);
+    const w = W();
+    w.phase = 'region';
+    w.regionIndex = 0; w.roundIndex = 0; w.gameIndex = 0;
+    save(); render();
+  });
 }
 
 // ── Landing ───────────────────────────────────────────────────────────
@@ -251,6 +261,7 @@ function renderWizardShell() {
   <div class="wizard">
     <div class="wizard-header">
       <button class="wizard-back-btn" id="wiz-back-btn">← Back</button>
+      <button class="wizard-reset-btn" id="wiz-reset-btn">↺ Reset</button>
       <div class="wizard-title">${label}</div>
       <div class="wizard-progress-wrap">
         <div class="wizard-progress-bar">
@@ -546,8 +557,20 @@ function renderScore() {
 function bindScore() {
   document.getElementById('score-t1').addEventListener('input', e => { P().score.team1 = e.target.value; save(); });
   document.getElementById('score-t2').addEventListener('input', e => { P().score.team2 = e.target.value; save(); });
-  document.getElementById('score-skip-btn').addEventListener('click', () => { W().phase = 'review'; save(); render(); });
-  document.getElementById('score-done-btn').addEventListener('click', () => { W().phase = 'review'; save(); render(); });
+
+  const goToReview = () => {
+    const unfilled = findFirstUnfilled();
+    if (unfilled) {
+      const w = W();
+      Object.assign(w, unfilled);
+      save(); render();
+    } else {
+      W().phase = 'review'; save(); render();
+    }
+  };
+
+  document.getElementById('score-skip-btn').addEventListener('click', goToReview);
+  document.getElementById('score-done-btn').addEventListener('click', goToReview);
 }
 
 // ── Review ────────────────────────────────────────────────────────────
@@ -771,6 +794,45 @@ function cascadeRegion(regionIndex, roundIndex, gameIndex) {
     const ff = P().finalFour;
     if (ff.champion && !ff.sf.includes(ff.champion)) ff.champion = null;
   }
+}
+
+// ── Find First Unfilled Pick ──────────────────────────────────────────
+/** Returns wizard position of first skipped/unfilled game where both teams
+ *  are resolved, or null if everything is filled. */
+function findFirstUnfilled() {
+  const p = P();
+  const t = T();
+  const ROUND_GAMES = [8, 4, 2, 1];
+
+  // Region games
+  for (let ri = 0; ri < t.regions.length; ri++) {
+    for (let rd = 0; rd < 4; rd++) {
+      for (let gi = 0; gi < ROUND_GAMES[rd]; gi++) {
+        if (p.regions[ri][rd][gi] === null) {
+          const [nameA, nameB] = getMatchupNames(ri, rd, gi);
+          if (nameA && nameB) {
+            return { phase: 'region', regionIndex: ri, roundIndex: rd, gameIndex: gi };
+          }
+        }
+      }
+    }
+  }
+
+  // Final Four semifinal slots
+  syncAllFinalFour();
+  for (let i = 0; i < 2; i++) {
+    if (!p.finalFour.sf[i]) {
+      const [a, b] = p.finalFour.winnerTeams[i];
+      if (a && b) return { phase: 'finalfour', ffPhase: i };
+    }
+  }
+
+  // Championship
+  if (!p.finalFour.champion && p.finalFour.sf[0] && p.finalFour.sf[1]) {
+    return { phase: 'championship' };
+  }
+
+  return null;
 }
 
 // ── Back Navigation ───────────────────────────────────────────────────
