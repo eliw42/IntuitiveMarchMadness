@@ -147,7 +147,7 @@ const SCHOOLS = {
     alumni: ['Tim Cook — Apple CEO', 'Melinda French Gates — philanthropist & tech executive', 'Elizabeth Dole — U.S. Senator & Cabinet secretary']
   },
   'Fairfield': {
-    espnId: 2210, mascot: 'Stags', emoji: '🦌',
+    espnId: 2217, mascot: 'Stags', emoji: '🦌',
     color1: '#8B0000', color2: '#FFFFFF',
     city: 'Fairfield, CT',
     facts: [
@@ -158,7 +158,7 @@ const SCHOOLS = {
     alumni: ['Brian P. Kelly — sports executive', 'Pat Ewing Jr. — basketball coach (son of Patrick Ewing)', 'Part of the Metro Atlantic Athletic Conference']
   },
   'Fairleigh Dickinson': {
-    espnId: 2216, mascot: 'Knights', emoji: '⚔️',
+    espnId: 161, mascot: 'Knights', emoji: '⚔️',
     color1: '#002868', color2: '#BF0A30',
     city: 'Hackensack, NJ',
     facts: [
@@ -213,7 +213,7 @@ const SCHOOLS = {
     alumni: ['Bing Crosby — legendary singer & actor (attended law school)', 'John Stockton — NBA Hall of Fame point guard', 'Kelly Olynyk — NBA center']
   },
   'Green Bay': {
-    espnId: 2699, mascot: 'Phoenix', emoji: '🦅',
+    espnId: 2739, mascot: 'Phoenix', emoji: '🦅',
     color1: '#006341', color2: '#003865',
     city: 'Green Bay, WI',
     facts: [
@@ -235,7 +235,7 @@ const SCHOOLS = {
     alumni: ['Don Ho — legendary Hawaiian entertainer', 'Carrie Ann Inaba — Dancing with the Stars judge', 'Michelle Wie West — LPGA golf champion']
   },
   'High Point': {
-    espnId: 2497, mascot: 'Panthers', emoji: '🐾',
+    espnId: 2272, mascot: 'Panthers', emoji: '🐾',
     color1: '#4B0082', color2: '#FFFFFF',
     city: 'High Point, NC',
     facts: [
@@ -367,7 +367,7 @@ const SCHOOLS = {
     alumni: ['Wilt Chamberlain — NBA legend who once scored 100 points in a game', 'Paul Pierce — NBA champion & Hall of Famer', 'Langston Hughes — celebrated poet (briefly attended)']
   },
   'Kennesaw State': {
-    espnId: 2927, mascot: 'Owls', emoji: '🦉',
+    espnId: 338, mascot: 'Owls', emoji: '🦉',
     color1: '#FDBB30', color2: '#000000',
     city: 'Kennesaw, GA',
     facts: [
@@ -400,7 +400,7 @@ const SCHOOLS = {
     alumni: ['Lee Iacocca — Chrysler CEO who saved the company from bankruptcy', 'Dan Cortese — MTV host & actor', 'Bethlehem Steel was once the world\'s second-largest steel producer, near Lehigh\'s campus']
   },
   'LIU': {
-    espnId: 305, mascot: 'Sharks', emoji: '🦈',
+    espnId: 112358, mascot: 'Sharks', emoji: '🦈',
     color1: '#003DA5', color2: '#FFFFFF',
     city: 'Brookville, NY',
     facts: [
@@ -444,7 +444,7 @@ const SCHOOLS = {
     alumni: ['Jim Henson — creator of The Muppets', 'Wale — Grammy-winning rapper', 'Kevin Durant attended briefly before going to Texas']
   },
   'McNeese': {
-    espnId: 2393, mascot: 'Cowboys', emoji: '🤠',
+    espnId: 2377, mascot: 'Cowboys', emoji: '🤠',
     color1: '#00539B', color2: '#FFC72C',
     city: 'Lake Charles, LA',
     facts: [
@@ -532,7 +532,7 @@ const SCHOOLS = {
     alumni: ['Johnny Morris — founder of Bass Pro Shops', 'Darren McFadden? No — he went to Arkansas', 'Known for producing business leaders and educators in the Midwest']
   },
   'Murray State': {
-    espnId: 2377, mascot: 'Racers', emoji: '🏇',
+    espnId: 93, mascot: 'Racers', emoji: '🏇',
     color1: '#002144', color2: '#8AAAC8',
     city: 'Murray, KY',
     facts: [
@@ -587,7 +587,7 @@ const SCHOOLS = {
     alumni: ['Phil Jackson — 11-time NBA champion coach (attended)', 'Roger Maris — baseball legend who broke Babe Ruth\'s home run record (attended briefly)', 'Kurtwood Smith — actor, That \'70s Show']
   },
   'Northern Iowa': {
-    espnId: 2534, mascot: 'Panthers', emoji: '🐾',
+    espnId: 2460, mascot: 'Panthers', emoji: '🐾',
     color1: '#4B116F', color2: '#FFCC00',
     city: 'Cedar Falls, IA',
     facts: [
@@ -708,7 +708,7 @@ const SCHOOLS = {
     alumni: ['Neil Armstrong — first human to walk on the Moon', 'Drew Brees — Super Bowl MVP quarterback (attended)', 'Amelia Earhart — pioneering aviator (was a student & instructor)']
   },
   'Queens': {
-    espnId: null, mascot: 'Royals', emoji: '👑',
+    espnId: 2511, mascot: 'Royals', emoji: '👑',
     color1: '#C8A951', color2: '#002147',
     city: 'Charlotte, NC',
     facts: [
@@ -785,7 +785,7 @@ const SCHOOLS = {
     alumni: ['Steve Nash — NBA MVP (attended!)', 'Brandi Chastain — soccer World Cup champion (attended)', 'Leon Panetta — CIA Director & Secretary of Defense']
   },
   'Siena': {
-    espnId: 2550, mascot: 'Saints', emoji: '⛪',
+    espnId: 2561, mascot: 'Saints', emoji: '⛪',
     color1: '#006A4E', color2: '#FFFFFF',
     city: 'Loudonville, NY',
     facts: [
@@ -851,7 +851,7 @@ const SCHOOLS = {
     alumni: ['Avery Johnson — NBA champion player & coach (attended)', 'Valerie Thomas — NASA physicist & inventor', 'Graduates are prominent in Louisiana politics and public service']
   },
   'Stephen F. Austin': {
-    espnId: 2620, mascot: 'Lumberjacks', emoji: '🪓',
+    espnId: 2617, mascot: 'Lumberjacks', emoji: '🪓',
     color1: '#472B7A', color2: '#FFFFFF',
     city: 'Nacogdoches, TX',
     facts: [
@@ -961,7 +961,7 @@ const SCHOOLS = {
     alumni: ['Graduates prominent in Alabama education and public service', 'Troy has a large military-affiliated student population', 'The Trojans have made several NCAA Tournament appearances']
   },
   'UC San Diego': {
-    espnId: null, mascot: 'Tritons', emoji: '🔱',
+    espnId: 28, mascot: 'Tritons', emoji: '🔱',
     color1: '#182B49', color2: '#00629B',
     city: 'La Jolla, CA',
     facts: [
@@ -1159,7 +1159,7 @@ const SCHOOLS = {
     alumni: ['Frank Lloyd Wright — iconic architect (briefly attended)', 'Chris Farley — beloved comedian & SNL star (attended)', 'John Muir — father of national parks (attended)']
   },
   'Wright State': {
-    espnId: 2691, mascot: 'Raiders', emoji: '✈️',
+    espnId: 2750, mascot: 'Raiders', emoji: '✈️',
     color1: '#006400', color2: '#866300',
     city: 'Dayton, OH',
     facts: [

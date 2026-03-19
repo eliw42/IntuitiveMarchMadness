@@ -56,6 +56,16 @@ function makeEmptyPicks(key) {
   };
 }
 
+// Timer used for auto-advance after a pick is made
+let autoAdvanceTimer = null;
+function scheduleAdvance(fn) {
+  if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = setTimeout(() => { autoAdvanceTimer = null; fn(); }, 600);
+}
+function cancelAdvance() {
+  if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
+}
+
 // ── Persist ───────────────────────────────────────────────────────────
 function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch(_) {}
@@ -337,22 +347,24 @@ function bindRegionGame() {
       const picks = P().regions[w.regionIndex];
       const prev  = picks[w.roundIndex][w.gameIndex];
       if (prev === name) {
+        cancelAdvance();
         cascadeRegion(w.regionIndex, w.roundIndex, w.gameIndex);
+        save(); render();
       } else {
         if (prev) cascadeRegion(w.regionIndex, w.roundIndex, w.gameIndex);
         picks[w.roundIndex][w.gameIndex] = name;
-        // Propagate E8 winner to Final Four tracking
         if (w.roundIndex === 3) syncFinalFour(w.regionIndex);
+        save(); render();
+        scheduleAdvance(advanceRegion);
       }
-      save(); render();
     });
   });
 
   const nextBtn = document.getElementById('region-next-btn');
-  if (nextBtn) nextBtn.addEventListener('click', advanceRegion);
+  if (nextBtn) nextBtn.addEventListener('click', () => { cancelAdvance(); advanceRegion(); });
 
   const skipBtn = document.getElementById('region-skip-btn');
-  if (skipBtn) skipBtn.addEventListener('click', advanceRegion);
+  if (skipBtn) skipBtn.addEventListener('click', () => { cancelAdvance(); advanceRegion(); });
 }
 
 function advanceRegion() {
@@ -447,13 +459,16 @@ function bindFinalFour() {
     card.addEventListener('click', () => {
       const name = card.dataset.name;
       const ff   = P().finalFour;
-      ff.sf[w.ffPhase] = (ff.sf[w.ffPhase] === name) ? null : name;
+      const prev = ff.sf[w.ffPhase];
+      ff.sf[w.ffPhase] = (prev === name) ? null : name;
       if (ff.champion && !ff.sf.includes(ff.champion)) ff.champion = null;
       save(); render();
+      if (ff.sf[w.ffPhase]) scheduleAdvance(advanceFinalFour);
+      else cancelAdvance();
     });
   });
-  document.getElementById('ff-skip-btn').addEventListener('click', advanceFinalFour);
-  document.getElementById('ff-next-btn').addEventListener('click', advanceFinalFour);
+  document.getElementById('ff-skip-btn').addEventListener('click', () => { cancelAdvance(); advanceFinalFour(); });
+  document.getElementById('ff-next-btn').addEventListener('click', () => { cancelAdvance(); advanceFinalFour(); });
 }
 
 function advanceFinalFour() {
@@ -509,10 +524,13 @@ function bindChampionship() {
       const ff   = P().finalFour;
       ff.champion = (ff.champion === name) ? null : name;
       save(); render();
+      if (ff.champion) scheduleAdvance(() => { W().phase = 'score'; save(); render(); });
+      else cancelAdvance();
     });
   });
-  document.getElementById('champ-skip-btn').addEventListener('click', () => { W().phase = 'score'; save(); render(); });
-  document.getElementById('champ-next-btn').addEventListener('click', () => { W().phase = 'score'; save(); render(); });
+  const goScore = () => { cancelAdvance(); W().phase = 'score'; save(); render(); };
+  document.getElementById('champ-skip-btn').addEventListener('click', goScore);
+  document.getElementById('champ-next-btn').addEventListener('click', goScore);
 }
 
 // ── Score Prediction ──────────────────────────────────────────────────
